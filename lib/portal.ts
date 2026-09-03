@@ -19,16 +19,35 @@ export function usesPortal(): boolean {
   return window.location.hostname.endsWith(".myjane.co.kr");
 }
 
-/** 로그인하러 갈 주소. `next`는 이 앱 안의 경로만 넘긴다 */
-export function loginUrl(next = "/home"): string {
-  const path = next.startsWith("/") && !next.startsWith("//") ? next : "/home";
-  if (!usesPortal()) return `/login?next=${encodeURIComponent(path)}`;
-  return `${PORTAL_ORIGIN}/login?from=${APP_KEY}&next=${encodeURIComponent(path)}`;
+/** 이 앱 안의 경로만 통과시킨다. 오픈 리다이렉트 방지 */
+function safePath(next: string): string {
+  return next.startsWith("/") && !next.startsWith("//") ? next : "/home";
+}
+
+export type AuthUrlOptions = {
+  /**
+   * 이미 세션이 있어도 **로그인 화면을 보여 달라**는 표시.
+   *
+   * 다른 앱에서 만든(서명 토큰 없는) 세션을 들고 왔을 때 쓴다. 이걸 붙이지 않으면
+   * 포털이 세션을 보고 그대로 되돌려보내고, 이 앱은 다시 포털로 보내 무한히 왕복한다.
+   */
+  relogin?: boolean;
+};
+
+/** 로그인하러 갈 주소 */
+export function loginUrl(next = "/home", options: AuthUrlOptions = {}): string {
+  const path = safePath(next);
+  const relogin = options.relogin ? "&relogin=1" : "";
+
+  if (!usesPortal()) {
+    return `/login?next=${encodeURIComponent(path)}${relogin}`;
+  }
+  return `${PORTAL_ORIGIN}/login?from=${APP_KEY}&next=${encodeURIComponent(path)}${relogin}`;
 }
 
 /** 회원가입하러 갈 주소 */
 export function signupUrl(next = "/home"): string {
-  const path = next.startsWith("/") && !next.startsWith("//") ? next : "/home";
+  const path = safePath(next);
   if (!usesPortal()) return `/register?next=${encodeURIComponent(path)}`;
   return `${PORTAL_ORIGIN}/signup?from=${APP_KEY}&next=${encodeURIComponent(path)}`;
 }

@@ -51,16 +51,28 @@ function getEffectiveDomain(): string | undefined {
   return undefined;
 }
 
-function getCookie(name: string): string | null {
-  if (typeof document === "undefined") return null;
+/**
+ * 같은 이름의 쿠키를 **전부** 모은다.
+ *
+ * `document.cookie`에는 같은 이름이 여러 번 들어올 수 있다 — `.myjane.co.kr` 도메인
+ * 쿠키와 `2hbk.myjane.co.kr` host-only 쿠키가 함께 있으면 브라우저가 둘 다 보내고,
+ * 어느 쪽이 먼저 오는지는 기대할 수 없다. 첫 줄만 읽으면 **토큰 없는 낡은 쿠키**를
+ * 집어 로그인이 무한히 왕복한다.
+ */
+function getCookieValues(name: string): string[] {
+  if (typeof document === "undefined") return [];
   const prefix = name + "=";
+  const out: string[] = [];
   for (const part of document.cookie.split(";")) {
     const trimmed = part.trim();
-    if (trimmed.startsWith(prefix)) {
-      return decodeURIComponent(trimmed.substring(prefix.length));
+    if (!trimmed.startsWith(prefix)) continue;
+    try {
+      out.push(decodeURIComponent(trimmed.substring(prefix.length)));
+    } catch {
+      /* 못 읽는 값은 버린다 */
     }
   }
-  return null;
+  return out;
 }
 
 function setCookie(name: string, value: string, maxAgeSec: number) {
@@ -107,27 +119,35 @@ function readPayload(raw: string): StoredPayload | null {
   }
 }
 
-export function loadSession(): SessionUser | null {
-  if (typeof window === "undefined") return null;
-  const raw = getCookie(SESSION_KEY);
-  if (!raw) return null;
+/** 살아 있는 쿠키 중 **토큰이 있는 것**을 우선해서 고른다 */
+function readBestPayload(): StoredPayload | null {
+  const now = Date.now();
+  const alive = getCookieValues(SESSION_KEY)
+    .map(readPayload)
+    .filter((p): p is StoredPayload => p !== null && now <= p.expiresAt);
 
-  const payload = readPayload(raw);
-  if (!payload || Date.now() > payload.expiresAt) {
-    deleteCookie(SESSION_KEY);
-    return null;
-  }
-  return payload.user;
+  if (alive.length === 0) return null;
+  return alive.find((p) => p.token) ?? alive[0];
+}
+
+export function loadSession(): SessionUser | null {
+  return readBestPayload()?.user ?? null;
 }
 
 /** API 호출에 실어 보낼 서명 토큰. 없으면 이 세션은 2hbk에서 쓸 수 없다 */
 export function loadSessionToken(): string | null {
-  if (typeof window === "undefined") return null;
-  const raw = getCookie(SESSION_KEY);
-  if (!raw) return null;
-  const payload = readPayload(raw);
-  if (!payload || Date.now() > payload.expiresAt) return null;
-  return payload.token ?? null;
+  return readBestPayload()?.token ?? null;
+}
+
+/**
+ * 이 앱에서 **쓸 수 있는** 세션인지.
+ *
+ * 로그인 여부를 판단하는 곳은 전부 이 함수를 쓴다. 화면과 로그인 페이지가
+ * 서로 다른 기준으로 판단하면 둘이 상대에게 서로 넘기며 무한히 왕복한다.
+ * (2026-09-03에 실제로 그랬다 — 화면은 토큰까지 봤고 로그인 페이지는 사용자만 봤다)
+ */
+export function hasUsableSession(): boolean {
+  return Boolean(readBestPayload()?.token);
 }
 
 export function saveSession(user: SessionUser, token?: string) {

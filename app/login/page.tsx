@@ -6,7 +6,7 @@ import { Suspense, useEffect, useState } from "react";
 import { Sheet } from "@/components/Sheet";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { api, errorMessage } from "@/lib/api";
-import { loadSession, saveSession, type SessionUser } from "@/lib/session";
+import { hasUsableSession, saveSession, type SessionUser } from "@/lib/session";
 import { usesPortal, loginUrl } from "@/lib/portal";
 
 /**
@@ -18,6 +18,8 @@ import { usesPortal, loginUrl } from "@/lib/portal";
 function LoginForm() {
   const params = useSearchParams();
   const next = params.get("next") ?? "/home";
+  /** 세션이 있어도 로그인 화면을 보여 달라는 표시 → lib/portal.ts */
+  const relogin = params.get("relogin") === "1";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,12 +28,19 @@ function LoginForm() {
   const [msg, setMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    if (loadSession()) {
+    /*
+      로그인 여부는 `hasUsableSession()` 하나로만 판단한다.
+      화면 게이트는 서명 토큰까지 보고 여기서는 사용자만 봤더니, 토큰 없는 세션에서
+      둘이 서로에게 넘기며 무한히 왕복했다(2026-09-03). → components/AuthGate.tsx
+    */
+    if (!relogin && hasUsableSession()) {
       window.location.replace(next);
       return;
     }
-    if (usesPortal()) window.location.replace(loginUrl(next));
-  }, [next]);
+    // 운영 도메인에서는 포털이 로그인을 맡는다. `relogin`을 함께 넘겨야
+    // 포털이 낡은 세션을 보고 그대로 되돌려보내지 않는다
+    if (usesPortal()) window.location.replace(loginUrl(next, { relogin }));
+  }, [next, relogin]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();

@@ -6,7 +6,7 @@ import { Suspense, useEffect, useState } from "react";
 import { Sheet } from "@/components/Sheet";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { api, errorMessage } from "@/lib/api";
-import { loadSession, saveSession, type SessionUser } from "@/lib/session";
+import { hasUsableSession, saveSession, type SessionUser } from "@/lib/session";
 import { signupUrl, usesPortal } from "@/lib/portal";
 
 /**
@@ -25,7 +25,8 @@ function RegisterForm() {
   const [msg, setMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    if (loadSession()) {
+    // 판단 기준은 화면 게이트와 같아야 한다 → app/login/page.tsx
+    if (hasUsableSession()) {
       window.location.replace(next);
       return;
     }
