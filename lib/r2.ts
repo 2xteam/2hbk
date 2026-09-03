@@ -38,7 +38,7 @@ function getClient(): S3Client {
 }
 
 function getBucket(): string {
-  return process.env.R2_BUCKET_NAME ?? "hamhibokka";
+  return process.env.R2_BUCKET_NAME ?? "2hbk";
 }
 
 function getPublicBase(): string {

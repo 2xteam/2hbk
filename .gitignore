@@ -12,3 +12,6 @@ certificates/
 *.tsbuildinfo
 next-env.d.ts
 scripts/backup/
+
+.vercel
+.env*
