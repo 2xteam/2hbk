@@ -2,7 +2,12 @@
   <!--
     myjane 앱 아이콘 가족 규칙을 따른다 — 짙은 보라 타일 + 게이지 호,
     안쪽 심볼만 앱마다 다르다. 2hbk의 심볼은 스티커를 뜻하는 별이다.
-    두 호는 같은 <circle>을 stroke-dasharray만 바꿔 그린다. 따로 path로 그리면
+
+    별은 **대각선으로 절반만 채운다.** 스티커판을 절반 채운 모습이고,
+    채우는 방향(좌하단 → 우상단)이 아래 게이지 호가 도는 방향과 같다.
+    같은 <path>를 두 번 그린다 — 채운 것은 잘라내고, 윤곽선은 통째로.
+
+    두 호도 같은 <circle>을 stroke-dasharray만 바꿔 그린다. 따로 path로 그리면
     끝점이 어긋나 금색 호가 떠 보인다.
     근거: my-obsidian-vault → 20-Design/앱 공통 UI와 아이콘.md
   -->
@@ -11,6 +16,16 @@
       <stop offset="0" stop-color="#3a1266" />
       <stop offset="1" stop-color="#1c0733" />
     </linearGradient>
+
+    <path
+      id="star"
+      d="M96.00 61.00 L105.17 86.38 L132.14 87.26 L110.84 103.82 L118.34 129.74 L96.00 114.60 L73.66 129.74 L81.16 103.82 L59.86 87.26 L86.83 86.38 Z"
+    />
+
+    <!-- 별 중심을 지나는 대각선(x − y = −3)의 좌하단 쪽만 남긴다 -->
+    <clipPath id="lowerLeftHalf">
+      <polygon points="-20,-17 209,212 -20,212" />
+    </clipPath>
   </defs>
 
   <rect width="192" height="192" rx="44" fill="url(#tile)" />
@@ -20,11 +35,12 @@
     <circle cx="96" cy="106.46" r="60" stroke="#e8d18a" stroke-dasharray="128 249" />
   </g>
 
-  <path
-    d="M96.00 69.00 L103.52 89.64 L125.48 90.42 L108.17 103.96 L114.22 125.08 L96.00 112.80 L77.78 125.08 L83.83 103.96 L66.52 90.42 L88.48 89.64 Z"
+  <use href="#star" fill="#ffffff" clip-path="url(#lowerLeftHalf)" />
+  <use
+    href="#star"
     fill="none"
     stroke="#ffffff"
-    stroke-width="9"
+    stroke-width="7"
     stroke-linejoin="round"
     stroke-linecap="round"
   />

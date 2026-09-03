@@ -152,10 +152,20 @@ export function hasUsableSession(): boolean {
 
 export function saveSession(user: SessionUser, token?: string) {
   if (typeof window === "undefined") return;
+
+  /*
+    토큰을 넘기지 않았으면 이미 있는 토큰을 그대로 살린다.
+    프로필 이름을 고칠 때처럼 세션을 다시 저장하는 자리에서 토큰이 떨어지면
+    바로 로그인이 풀린다. 단 사람이 바뀌었으면 남의 토큰을 물려줄 수 없다.
+  */
+  const kept = readBestPayload();
+  const carried =
+    token ?? (kept && kept.user.id === user.id ? kept.token : undefined);
+
   const body: StoredPayload = {
     v: 1,
     user,
-    ...(token ? { token } : {}),
+    ...(carried ? { token: carried } : {}),
     expiresAt: Date.now() + SESSION_TTL_SEC * 1000,
   };
   setCookie(SESSION_KEY, JSON.stringify(body), SESSION_TTL_SEC);
