@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192" role="img" aria-label="2hbk">
+  <!--
+    myjane 앱 아이콘 가족 규칙을 따른다 — 짙은 보라 타일 + 게이지 호,
+    안쪽 심볼만 앱마다 다르다. 2hbk의 심볼은 스티커를 뜻하는 별이다.
+    두 호는 같은 <circle>을 stroke-dasharray만 바꿔 그린다. 따로 path로 그리면
+    끝점이 어긋나 금색 호가 떠 보인다.
+    근거: my-obsidian-vault → 20-Design/앱 공통 UI와 아이콘.md
+  -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1" gradientTransform="rotate(60 0.5 0.5)">
+      <stop offset="0" stop-color="#3a1266" />
+      <stop offset="1" stop-color="#1c0733" />
+    </linearGradient>
+  </defs>
+
+  <rect width="192" height="192" rx="44" fill="url(#tile)" />
+
+  <g transform="rotate(158.96 96 106.46)" fill="none" stroke-width="11" stroke-linecap="round">
+    <circle cx="96" cy="106.46" r="60" stroke="#6b4a9e" stroke-dasharray="232.6 144.4" />
+    <circle cx="96" cy="106.46" r="60" stroke="#e8d18a" stroke-dasharray="128 249" />
+  </g>
+
+  <path
+    d="M96.00 69.00 L103.52 89.64 L125.48 90.42 L108.17 103.96 L114.22 125.08 L96.00 112.80 L77.78 125.08 L83.83 103.96 L66.52 90.42 L88.48 89.64 Z"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="9"
+    stroke-linejoin="round"
+    stroke-linecap="round"
+  />
+</svg>
