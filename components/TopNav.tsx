@@ -25,6 +25,7 @@ const otherApps = [
   { name: "SnapWord", iconUrl: "/snapword-link-icon.png", href: "https://snapword.myjane.co.kr/home" },
   { name: "SnapNote", iconUrl: "/snapnote-link-icon.png", href: "https://snapnote.myjane.co.kr/home" },
   { name: "FitLog", iconUrl: "/fitlog-link-icon.png", href: "https://fitlog.myjane.co.kr/home" },
+  { name: "TypeLog", iconUrl: "/typelog-link-icon.png", href: "https://typelog.myjane.co.kr/home" },
 ];
 
 export function TopNav() {
