@@ -12,8 +12,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "함히보까 — 함께 목표를 정하고 스티커를 모아 채우는 기록 도구",
     start_url: "/home",
     display: "standalone",
-    background_color: "#fdfbff",
-    theme_color: "#fdfbff",
+    background_color: "#f7fbfb",
+    theme_color: "#f7fbfb",
     icons: [
       { src: "/icon.png", sizes: "192x192", type: "image/png" },
       { src: "/2hbk-icon-512.png", sizes: "512x512", type: "image/png" },

@@ -147,7 +147,7 @@ export default function GoalDetailPage({
 
         <div className="row" style={{ gap: 9, marginTop: 18 }}>
           <Avatar nickname={goal.creator.nickname} src={goal.creator.profileImage} size={26} />
-          <span style={{ fontSize: "0.82rem", color: "rgba(232,222,250,0.8)" }}>
+          <span style={{ fontSize: "0.82rem", color: "rgba(230,244,246,0.8)" }}>
             {goal.creator.nickname}님이 만들었어요
           </span>
         </div>

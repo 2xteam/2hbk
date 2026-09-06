@@ -122,7 +122,7 @@ export default function MyPage() {
             <Avatar nickname={me.nickname} src={me.profileImage} size={58} />
             <div>
               <div style={{ fontWeight: 800 }}>{me.nickname}</div>
-              <div style={{ fontSize: "0.8rem", color: "rgba(232,222,250,0.7)" }}>
+              <div style={{ fontSize: "0.8rem", color: "rgba(230,244,246,0.7)" }}>
                 {me.email ?? "이메일 없음"}
               </div>
             </div>

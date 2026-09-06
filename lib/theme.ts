@@ -22,22 +22,22 @@ export const PRESET_THEMES: ThemeConfig[] = [
   {
     id: "light",
     label: "라이트",
-    preview: { bg: "#fdfbff", accent: "#7c3aed", text: "#1a0f2e" },
+    preview: { bg: "#f7fbfb", accent: "#116271", text: "#0f2027" },
   },
   {
     id: "dark",
-    label: "퍼플 다크",
-    preview: { bg: "#190527", accent: "#a78bfa", text: "#f6f1fb" },
+    label: "먹청 다크",
+    preview: { bg: "#04161b", accent: "#5fb8c9", text: "#eef7f8" },
   },
   {
     id: "custom",
     label: "커스텀",
-    preview: { bg: "#fdfbff", accent: "#7c3aed", text: "#1a0f2e" },
+    preview: { bg: "#f7fbfb", accent: "#116271", text: "#0f2027" },
   },
 ];
 
 export const DEFAULT_THEME: ThemeId = "light";
-export const DEFAULT_CUSTOM: ThemeCustomColor = { accent: "#7c3aed", bg: "#fdfbff" };
+export const DEFAULT_CUSTOM: ThemeCustomColor = { accent: "#116271", bg: "#f7fbfb" };
 
 export const THEME_STORAGE_KEY = "2hbk_theme";
 
@@ -104,13 +104,14 @@ export function buildCustomVars(custom: ThemeCustomColor): Record<string, string
     "--bg-elevated": mix(surface, isDark ? 0.82 : 1),
     "--border": isDark ? "rgba(255,255,255,0.14)" : "rgba(0,0,0,0.1)",
     "--border-subtle": isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.05)",
-    "--text-primary": isDark ? "#ffffff" : "#1a0f2e",
-    "--text-secondary": isDark ? "#b6a9d0" : "#6b5f8a",
-    "--text-muted": isDark ? "#8b7ead" : "#786b9c",
+    "--text-primary": isDark ? "#ffffff" : "#0f2027",
+    "--text-secondary": isDark ? "#a3bcc1" : "#566b70",
+    "--text-muted": isDark ? "#8ba5aa" : "#5e7377",
     "--accent": custom.accent,
     "--accent-hover": `rgb(${Math.max(ar - 24, 0)},${Math.max(ag - 24, 0)},${Math.max(ab - 24, 0)})`,
     "--accent-subtle": `rgba(${ar},${ag},${ab},0.14)`,
     "--point": isDark ? "#e8c96a" : "#c9a84c",
+    "--point-ink": isDark ? "#e8c96a" : "#725c1a",
     "--point-subtle": "rgba(201,168,76,0.14)",
     "--gold": isDark ? "#e8c96a" : "#c9a84c",
     "--danger": isDark ? "#ff7a90" : "#e0455f",
@@ -119,7 +120,7 @@ export function buildCustomVars(custom: ThemeCustomColor): Record<string, string
     "--success-subtle": "rgba(47,158,116,0.12)",
     "--warning": "#c9a84c",
     "--input-bg": mix(surface, isDark ? 0.9 : 1),
-    "--input-border": isDark ? "rgba(255,255,255,0.16)" : "rgba(72,42,97,0.14)",
+    "--input-border": isDark ? "rgba(255,255,255,0.16)" : "rgba(15,72,84,0.14)",
     "--on-accent": "#ffffff",
   };
 }

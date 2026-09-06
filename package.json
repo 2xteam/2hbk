@@ -10,7 +10,8 @@
     "lint": "next lint",
     "migrate:dry": "node scripts/migrate-users.mjs --dry",
     "migrate:run": "node scripts/migrate-users.mjs --run",
-    "check:images": "node scripts/check-images.mjs"
+    "check:images": "node scripts/check-images.mjs",
+    "dev:verify": "node scripts/dev-verify.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1123.0",

@@ -1,6 +1,6 @@
 /* ── 테마 변수 ──
  * 색을 직접 쓰지 않고 항상 이 변수를 참조한다. 그래야 테마 전환이 깨지지 않는다.
- * 팔레트는 결쩜사(kyulzzumsa.co.kr)를 따른다 — 중립색에 보라를 섞어
+ * 팔레트는 결쩜사(kyulzzumsa.co.kr) 구조에 먹청을 얹는다 — 중립색에 청록을 섞어
  * 순수한 검정·회색을 쓰지 않는 것이 이 결의 핵심이다.
  * 근거: my-obsidian-vault → 20-Design/결쩜사 디자인 시스템.md · 앱 공통 UI와 아이콘.md
  *
@@ -21,56 +21,65 @@
 /* 라이트 — 기본 테마 */
 :root,
 [data-theme="light"] {
-  --bg-primary: #fdfbff;
-  --bg-secondary: #f5f0fc;
+  --bg-primary: #f7fbfb;
+  --bg-secondary: #e8f2f3;
   --bg-card: #ffffff;
   --bg-elevated: #ffffff;
-  --border: rgba(139, 92, 246, 0.14);
-  --border-subtle: rgba(139, 92, 246, 0.08);
-  --text-primary: #1a0f2e;
-  --text-secondary: #6b5f8a;
-  --text-muted: #786b9c;
-  --accent: #7c3aed;
-  --accent-hover: #6830c8;
-  --accent-subtle: rgba(139, 92, 246, 0.08);
+  --border: rgba(17, 98, 113, 0.14);
+  --border-subtle: rgba(17, 98, 113, 0.08);
+  --text-primary: #0f2027;
+  --text-secondary: #566b70;
+  --text-muted: #5e7377;
+  --accent: #116271;
+  --accent-hover: #0d5866;
+  --accent-subtle: rgba(17, 98, 113, 0.08);
   --point: #c9a84c;
   --point-subtle: rgba(201, 168, 76, 0.12);
+  /*
+   * 금색을 **글자로 쓸 때는 이 값**을 쓴다. --point 는 알약 배경·구분선처럼
+   * 넓거나 좁은 **면적** 전용이다. 금색 알약 위에 금색 글자를 얹으면 2.1:1 이라
+   * 안 읽힌다 — 실제로 세 앱에서 그러고 있었다.
+   * 다크 테마에서는 금색이 짙은 면 위라 그대로 읽히므로 --point 와 같다.
+   */
+  --point-ink: #725c1a;
   --danger: #e0455f;
   --danger-subtle: rgba(224, 69, 95, 0.1);
   --success: #2f9e74;
   --success-subtle: rgba(47, 158, 116, 0.12);
   --warning: #c9a84c;
   --input-bg: #ffffff;
-  --input-border: rgba(72, 42, 97, 0.14);
+  --input-border: rgba(15, 72, 84, 0.14);
   --gold: #c9a84c;
   --on-accent: #ffffff;
 }
 
-/* 퍼플 다크 */
+/* 먹청 다크 */
 [data-theme="dark"] {
-  --bg-primary: #190527;
-  --bg-secondary: #1e0938;
-  --bg-card: #2d1054;
-  --bg-elevated: #3a1760;
-  --border: rgba(196, 181, 253, 0.18);
-  --border-subtle: rgba(196, 181, 253, 0.08);
-  --text-primary: #f6f1fb;
-  --text-secondary: #b0a3cd;
-  --text-muted: #8577a8;
-  --accent: #a78bfa;
-  --accent-hover: #b9a3fb;
-  --accent-subtle: rgba(167, 139, 250, 0.16);
+  --bg-primary: #04161b;
+  --bg-secondary: #072027;
+  --bg-card: #0b2b36;
+  --bg-elevated: #0f3846;
+  --border: rgba(150, 205, 216, 0.18);
+  --border-subtle: rgba(150, 205, 216, 0.08);
+  --text-primary: #eef7f8;
+  --text-secondary: #a3bcc1;
+  --text-muted: #8ba5aa;
+  --accent: #5fb8c9;
+  --accent-hover: #7dcbd9;
+  --accent-subtle: rgba(95, 184, 201, 0.16);
   --point: #e8c96a;
   --point-subtle: rgba(232, 201, 106, 0.14);
+  /* 짙은 면 위에서는 금색이 그대로 읽힌다 (금색 알약 위 6.76:1) */
+  --point-ink: #e8c96a;
   --danger: #ff7a90;
   --danger-subtle: rgba(255, 122, 144, 0.14);
   --success: #7ee0b8;
   --success-subtle: rgba(126, 224, 184, 0.14);
   --warning: #ead58c;
   --input-bg: rgba(255, 255, 255, 0.04);
-  --input-border: rgba(196, 181, 253, 0.2);
+  --input-border: rgba(150, 205, 216, 0.2);
   --gold: #ead58c;
-  --on-accent: #21083f;
+  --on-accent: #04161b;
 }
 
 * {
@@ -572,7 +581,7 @@ button:focus-visible {
   border-radius: var(--radius-lg);
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  box-shadow: 0 18px 44px rgba(37, 13, 62, 0.08);
+  box-shadow: 0 18px 44px rgba(6, 34, 40, 0.08);
 }
 
 .sheet + .sheet {
@@ -587,8 +596,8 @@ button:focus-visible {
 
 .sheet--dark {
   background:
-    radial-gradient(circle at 78% 16%, rgba(188, 167, 251, 0.14), transparent 36%),
-    linear-gradient(150deg, #190527, #32104f 65%, #401961);
+    radial-gradient(circle at 78% 16%, rgba(95, 184, 201, 0.14), transparent 36%),
+    linear-gradient(150deg, #04161b, #0e3037 65%, #134450);
   color: #fff;
   border: none;
 }
@@ -637,7 +646,7 @@ button:focus-visible {
 }
 
 .sheet--dark .lead {
-  color: rgba(232, 222, 250, 0.72);
+  color: rgba(230, 244, 246, 0.72);
 }
 
 /* 실(結) 장식 */
@@ -665,7 +674,7 @@ button:focus-visible {
 
 .pill--gold {
   background: var(--point-subtle);
-  color: var(--point);
+  color: var(--point-ink);
 }
 
 /* 버튼 */
@@ -684,8 +693,8 @@ button:focus-visible {
 }
 
 .btn--primary {
-  background: linear-gradient(135deg, #8150e8, #6830c8);
-  box-shadow: 0 10px 24px rgba(104, 48, 200, 0.18);
+  background: linear-gradient(135deg, #14788a, #0d5866);
+  box-shadow: 0 10px 24px rgba(6, 60, 72, 0.18);
   color: #fff;
 }
 
@@ -698,7 +707,7 @@ button:focus-visible {
 /* 어두운 시트 위에서는 보조 버튼도 밝게 */
 .sheet--dark .btn--ghost {
   background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(200, 184, 255, 0.3);
+  border-color: rgba(150, 205, 216, 0.3);
   color: #fff;
 }
 
@@ -801,7 +810,7 @@ button:focus-visible {
   border-radius: 14px;
   border: 1px solid var(--border);
   background: var(--bg-card);
-  box-shadow: 0 18px 40px rgba(37, 13, 62, 0.18);
+  box-shadow: 0 18px 40px rgba(6, 34, 40, 0.18);
   z-index: 60;
   display: grid;
   gap: 2px;
@@ -851,7 +860,7 @@ button:focus-visible {
 
 /* ── myjane 워드마크 (푸터) ──
  * `my`는 배경에 맞춰 본문 색을 쓰고, `jane`은 앱 테마와 무관하게
- * myjane 브랜드 보라로 고정한다. 흰 배경에서는 my가 검정,
+ * myjane 브랜드 먹청으로 고정한다. 흰 배경에서는 my가 검정,
  * 어두운 배경에서는 my가 흰색으로 보인다. */
 .myjane-mark {
   font-size: 0.95rem;
@@ -866,17 +875,23 @@ button:focus-visible {
   text-decoration: underline;
 }
 
+/*
+ * jane 은 myjane 브랜드 색이다.
+ *
+ * ⚠️ 이 워드마크는 **항상 어두운 푸터 위에** 있다 (배경이 #061a1f 리터럴이라
+ * 앱 테마와 무관하다). 그래서 밝은 면용 먹청(#116271)이 아니라 짙은 면용
+ * 값을 쓴다 — 밝은 값으로는 2.56:1 이다.
+ *
+ * 원래 규칙이 둘로 나뉘어 있었고 밝은 값이 뒤에서 이기고 있었다.
+ * 보라 시절에도 3.32:1 로 미달이었다. 한 줄로 합친다.
+ */
 .myjane-mark > span {
-  color: #a78bfa;
-}
-
-[data-theme="light"] .myjane-mark > span {
-  color: #7c3aed;
+  color: #5fb8c9;
 }
 
 /* custom 테마는 배경을 미리 알 수 없어 양쪽에서 읽히는 중간 톤을 쓴다 */
 [data-theme="custom"] .myjane-mark > span {
-  color: #8b5cf6;
+  color: #1a7f8f;
 }
 
 /* ────────────────────────────────────────────────────────────
@@ -972,7 +987,7 @@ button:focus-visible {
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
   background: var(--bg-card);
-  box-shadow: 0 10px 26px rgba(37, 13, 62, 0.06);
+  box-shadow: 0 10px 26px rgba(6, 34, 40, 0.06);
   color: inherit;
   text-decoration: none;
   transition: transform 180ms, box-shadow 180ms;
@@ -980,7 +995,7 @@ button:focus-visible {
 
 .goal-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 16px 34px rgba(37, 13, 62, 0.1);
+  box-shadow: 0 16px 34px rgba(6, 34, 40, 0.1);
 }
 
 .goal-card--done {
@@ -1122,7 +1137,7 @@ button:focus-visible {
 .tab[data-active="true"] {
   background: var(--bg-card);
   color: var(--text-primary);
-  box-shadow: 0 4px 15px rgba(38, 13, 63, 0.08);
+  box-shadow: 0 4px 15px rgba(6, 34, 40, 0.08);
 }
 
 /* ── 빈 화면 ──
