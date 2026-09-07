@@ -116,7 +116,7 @@ export default function LandingPage() {
               </a>
             </p>
             <p style={{ ...footerLineStyle, marginTop: 8 }}>
-              @2026 MyJane All rights reserved
+              @2026 myjane All rights reserved
             </p>
           </div>
         </footer>
