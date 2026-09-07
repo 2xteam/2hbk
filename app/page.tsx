@@ -75,7 +75,7 @@ export default function LandingPage() {
           >
             <div style={{ display: "grid", gap: 12, marginTop: 18 }}>
               {MODES.map((m) => (
-                <div key={m.name} style={modeStyle}>
+                <div key={m.name} className="card--point" style={modeStyle}>
                   <div className="row" style={{ gap: 8 }}>
                     <strong style={{ fontSize: "0.92rem" }}>{m.name}</strong>
                     <span className="pill">{m.scope}</span>
@@ -188,7 +188,11 @@ const stepDescStyle: CSSProperties = {
 
 const modeStyle: CSSProperties = {
   padding: "15px 17px",
-  borderRadius: "var(--radius-sm)",
+  // ⚠️ 좌상·우하는 .card--point 가 깎는다 (app/elements.css). 인라인
+  // borderRadius shorthand 를 쓰면 네 모서리를 모두 세워 그 깎임을 덮어쓴다 —
+  // 그래서 남는 두 모서리만 longhand 로 적는다
+  borderTopRightRadius: "var(--radius-sm)",
+  borderBottomLeftRadius: "var(--radius-sm)",
   background: "var(--bg-secondary)",
   border: "1px solid var(--border-subtle)",
 };
