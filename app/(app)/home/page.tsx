@@ -57,7 +57,6 @@ export default function HomePage() {
     <>
       <Sheet
         tone="dark"
-        ornament
         eyebrow="TODAY"
         headline={
           goals === null

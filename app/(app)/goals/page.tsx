@@ -66,7 +66,7 @@ export default function GoalsPage() {
 
   return (
     <>
-      <Sheet tone="dark" ornament eyebrow="GOALS" headline="스티커판">
+      <Sheet tone="dark" eyebrow="GOALS" headline="스티커판">
         <div className="row row--wrap" style={{ gap: 10, marginTop: 18 }}>
           <Link className="btn btn--primary btn--sm" href="/goals/new">
             목표 만들기

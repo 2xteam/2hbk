@@ -137,7 +137,7 @@ export default function GoalDetailPage({
 
   return (
     <>
-      <Sheet tone="dark" ornament eyebrow="GOAL" headline={goal.title} lead={goal.description}>
+      <Sheet tone="dark" eyebrow="GOAL" headline={goal.title} lead={goal.description}>
         <div className="row row--wrap" style={{ gap: 7, marginTop: 16 }}>
           <span className="pill">{MODE_LABEL[goal.mode] ?? goal.mode}</span>
           <span className="pill">{VISIBILITY_LABEL[goal.visibility] ?? goal.visibility}</span>

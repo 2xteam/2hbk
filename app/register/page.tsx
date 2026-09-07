@@ -59,7 +59,6 @@ function RegisterForm() {
     <main className="page" style={{ paddingTop: 40, maxWidth: 460 }}>
       <Sheet
         tone="dark"
-        ornament
         eyebrow="START TODAY"
         headline={
           <>

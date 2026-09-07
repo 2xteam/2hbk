@@ -95,7 +95,7 @@ export default function UserProfilePage({
 
   return (
     <>
-      <Sheet tone="dark" ornament eyebrow="PROFILE" headline={data.user.nickname}>
+      <Sheet tone="dark" eyebrow="PROFILE" headline={data.user.nickname}>
         <div className="row" style={{ gap: 12, marginTop: 16 }}>
           <Avatar nickname={data.user.nickname} src={data.user.profileImage} size={54} />
           <div>

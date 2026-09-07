@@ -46,7 +46,6 @@ export default function EditGoalPage({
     <>
       <Sheet
         tone="dark"
-        ornament
         eyebrow="EDIT GOAL"
         headline="목표 고치기"
         lead="필요한 스티커 수를 줄이면 이미 다 모은 사람은 그대로 달성으로 남습니다."

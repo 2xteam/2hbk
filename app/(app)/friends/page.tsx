@@ -110,7 +110,6 @@ export default function FriendsPage() {
     <>
       <Sheet
         tone="dark"
-        ornament
         eyebrow="FRIENDS"
         headline="같이 채울 사람"
         lead="친구를 맺으면 서로의 챌린저 모집 목표가 보이고, 초대할 수 있어요."

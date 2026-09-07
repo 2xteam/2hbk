@@ -64,7 +64,6 @@ function LoginForm() {
     <main className="page" style={{ paddingTop: 40, maxWidth: 460 }}>
       <Sheet
         tone="dark"
-        ornament
         eyebrow="WELCOME BACK"
         headline={
           <>

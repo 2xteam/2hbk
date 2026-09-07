@@ -116,7 +116,7 @@ export default function MyPage() {
 
   return (
     <>
-      <Sheet tone="dark" ornament eyebrow="MY" headline="내 정보">
+      <Sheet tone="dark" eyebrow="MY" headline="내 정보">
         {me ? (
           <div className="row" style={{ gap: 14, marginTop: 16 }}>
             <Avatar nickname={me.nickname} src={me.profileImage} size={58} />

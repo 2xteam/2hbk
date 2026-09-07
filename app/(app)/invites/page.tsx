@@ -72,7 +72,6 @@ export default function InvitesPage() {
     <>
       <Sheet
         tone="dark"
-        ornament
         eyebrow="INVITES"
         headline="초대와 참가 요청"
         lead="받은 초대는 수락하면 바로 그 목표의 참가자가 됩니다."
