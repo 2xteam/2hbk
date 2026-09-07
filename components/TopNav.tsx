@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import { clearSession } from "@/lib/session";
 import type { InvitationView } from "@/lib/services/invitations";
 import type { FollowView } from "@/lib/services/follows";
+import { ScrollProgress } from "@/components/ScrollProgress";
 
 /** 주 기능 — 데스크톱 상단에 그대로 노출. 표기는 다른 myjane 앱과 같이 영어 */
 const nav = [
@@ -179,6 +180,12 @@ export function TopNav() {
             <span className="topnav-hamburger-line topnav-hamburger-line--2" />
             <span className="topnav-hamburger-line topnav-hamburger-line--3" />
           </button>
+
+          {/* 스크롤 진행 띠 — .topnav 가 아니라 **.topnav-bar** 안에 둔다.
+              .topnav 은 햄버거를 열면 메뉴만큼 키가 자라서, 그 아래 변에
+              붙이면 띠가 메뉴 밑으로 내려가 버린다. 높이가 고정된 이 줄에
+              붙여야 메뉴를 열어도 제자리에 있다 */}
+          <ScrollProgress />
         </div>
 
         <div className="topnav-menu">
