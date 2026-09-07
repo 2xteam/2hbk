@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { AppIcon } from "@/components/AppIcon";
 import { LandingCta, LandingHeaderAuth } from "@/components/LandingAuth";
+import { ScrollProgress } from "@/components/ScrollProgress";
 import { Sheet } from "@/components/Sheet";
 import { StickerBoard } from "@/components/StickerBoard";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -24,11 +25,14 @@ export default function LandingPage() {
             </span>
             <LandingHeaderAuth />
           </div>
+          {/* 헤더가 sticky 라서 띠가 스크롤을 따라온다 */}
+          <ScrollProgress />
         </header>
 
         <main className="page">
           <Sheet
             tone="dark"
+            point
             eyebrow="2HBK · STICKER GOALS"
             headline={
               <>
@@ -46,13 +50,18 @@ export default function LandingPage() {
           </Sheet>
 
           <Sheet tone="tint" eyebrow="HOW IT WORKS" headline="세 걸음이면 됩니다">
-            <ol style={stepsStyle}>
+            {/* 번호 원과 연결선은 app/elements.css 의 .flow 가 그린다.
+                예전 인라인 stepNumStyle 은 번호에 면적용 var(--accent) 를 글자색으로
+                썼다 — .flow-num 은 글자용 var(--accent-ink) 를 쓴다 */}
+            <ol className="flow">
               {STEPS.map((s, i) => (
-                <li key={s.title} style={stepStyle}>
-                  <span style={stepNumStyle}>{String(i + 1).padStart(2, "0")}</span>
+                <li key={s.title} className="flow-step">
+                  <span className="flow-num" aria-hidden="true">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
                   <div>
-                    <p style={stepTitleStyle}>{s.title}</p>
-                    <p style={stepDescStyle}>{s.desc}</p>
+                    <h3>{s.title}</h3>
+                    <p>{s.desc}</p>
                   </div>
                 </li>
               ))}
@@ -61,7 +70,7 @@ export default function LandingPage() {
 
           <Sheet
             eyebrow="THREE MODES"
-            headline="혼자 해도, 같이 해도"
+            headline={<>혼자 해도, <span className="mark">같이 해도</span></>}
             lead="목표를 만들 때 방식을 고르면 공개 범위와 참가 승인이 알아서 따라옵니다."
           >
             <div style={{ display: "grid", gap: 12, marginTop: 18 }}>
@@ -90,7 +99,7 @@ export default function LandingPage() {
             </p>
           </Sheet>
 
-          <Sheet center eyebrow="START" headline="오늘 목표 하나만 정해 볼까요?">
+          <Sheet center point eyebrow="START" headline="오늘 목표 하나만 정해 볼까요?">
             <div style={{ display: "flex", justifyContent: "center", marginTop: 18 }}>
               <LandingCta variant="closing" />
             </div>
@@ -112,6 +121,24 @@ export default function LandingPage() {
                 style={{ color: "var(--on-dark)" }}
               >
                 my<span>jane</span>
+              </a>
+            </p>
+            {/*
+              법적 고지 — 세 페이지는 포털(myjane)에 한 벌만 둔다.
+              여섯 앱이 회원과 세션을 공유하므로 방침도 한 곳이어야 한다.
+              → my-obsidian-vault / 50-Plans/C 법적 페이지.md
+            */}
+            <p style={footerLegalStyle}>
+              <a href="https://www.myjane.co.kr/legal/privacy" style={footerLegalLinkStyle}>
+                개인정보처리방침
+              </a>
+              <span style={footerLegalSepStyle}>·</span>
+              <a href="https://www.myjane.co.kr/legal/terms" style={footerLegalLinkStyle}>
+                이용약관
+              </a>
+              <span style={footerLegalSepStyle}>·</span>
+              <a href="https://www.myjane.co.kr/legal/cookies" style={footerLegalLinkStyle}>
+                쿠키 안내
               </a>
             </p>
             <p style={{ ...footerLineStyle, marginTop: 8 }}>
@@ -151,33 +178,6 @@ const headerInner: CSSProperties = {
   gap: 12,
 };
 
-const stepsStyle: CSSProperties = {
-  listStyle: "none",
-  margin: "20px 0 0",
-  padding: 0,
-  display: "grid",
-  gap: 16,
-};
-
-const stepStyle: CSSProperties = { display: "flex", gap: 14, alignItems: "flex-start" };
-
-const stepNumStyle: CSSProperties = {
-  flexShrink: 0,
-  width: 30,
-  fontSize: 12,
-  fontWeight: 900,
-  letterSpacing: 1,
-  color: "var(--accent)",
-  paddingTop: 2,
-};
-
-const stepTitleStyle: CSSProperties = {
-  margin: 0,
-  fontSize: "0.94rem",
-  fontWeight: 800,
-  letterSpacing: "-0.3px",
-};
-
 const stepDescStyle: CSSProperties = {
   margin: "5px 0 0",
   fontSize: "0.82rem",
@@ -206,4 +206,26 @@ const footerLineStyle: CSSProperties = {
   lineHeight: 1.8,
   color: "var(--on-dark-faint)",
   wordBreak: "keep-all",
+};
+
+/*
+ * 어두운 푸터의 법적 고지 링크. 짙은 면 위이므로 --on-dark 계열을 쓴다
+ * (밝은 면용 토큰을 쓰면 2~3:1 로 떨어진다).
+ * 다섯 앱이 같은 모양이다 — 고칠 때 함께 고친다.
+ */
+const footerLegalStyle: CSSProperties = {
+  margin: "12px 0 0",
+  fontSize: "0.78rem",
+  lineHeight: 1.9,
+};
+
+const footerLegalLinkStyle: CSSProperties = {
+  color: "var(--on-dark-dim)",
+  textDecoration: "none",
+  fontWeight: 600,
+};
+
+const footerLegalSepStyle: CSSProperties = {
+  margin: "0 8px",
+  color: "var(--on-dark-faint)",
 };
