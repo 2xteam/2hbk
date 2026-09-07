@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { AppIcon } from "@/components/AppIcon";
 import { LandingCta, LandingHeaderAuth } from "@/components/LandingAuth";
 import { Sheet } from "@/components/Sheet";
 import { StickerBoard } from "@/components/StickerBoard";
@@ -18,8 +19,7 @@ export default function LandingPage() {
         <header style={headerStyle}>
           <div className="page" style={{ ...headerInner, paddingTop: 14, paddingBottom: 14 }}>
             <span className="row" style={{ gap: 9 }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/site-title-icon.png" alt="" width={30} height={30} />
+              <AppIcon size={30} priority />
               <span style={{ fontWeight: 900, letterSpacing: "-0.02em" }}>2hbk</span>
             </span>
             <LandingHeaderAuth />
@@ -109,7 +109,7 @@ export default function LandingPage() {
               <a
                 href="https://www.myjane.co.kr"
                 className="myjane-mark"
-                style={{ color: "#fff" }}
+                style={{ color: "var(--on-dark)" }}
               >
                 my<span>jane</span>
               </a>
@@ -196,14 +196,14 @@ const modeStyle: CSSProperties = {
 const footerStyle: CSSProperties = {
   marginTop: 40,
   paddingTop: 30,
-  background: "#061a1f",
-  color: "#fff",
+  background: "var(--footer-bg)",
+  color: "var(--on-dark)",
 };
 
 const footerLineStyle: CSSProperties = {
   margin: 0,
   fontSize: "0.78rem",
   lineHeight: 1.8,
-  color: "rgba(230,244,246,0.62)",
+  color: "var(--on-dark-faint)",
   wordBreak: "keep-all",
 };
