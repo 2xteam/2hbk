@@ -7,7 +7,7 @@ import { Sheet } from "@/components/Sheet";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { api, errorMessage } from "@/lib/api";
 import { hasUsableSession, saveSession, type SessionUser } from "@/lib/session";
-import { usesPortal, loginUrl } from "@/lib/portal";
+import { usesPortal, loginUrl, signupUrl } from "@/lib/portal";
 
 /**
  * 이메일 + 비밀번호 로그인.
@@ -126,7 +126,7 @@ function LoginForm() {
 
         <p style={{ marginTop: 18, textAlign: "center", fontSize: "0.8rem" }}>
           <span className="muted">아직 계정이 없으신가요? </span>
-          <Link href={`/register?next=${encodeURIComponent(next)}`}>회원가입</Link>
+          <a href={signupUrl(next)}>회원가입</a>
         </p>
       </Sheet>
     </main>
