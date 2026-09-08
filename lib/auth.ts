@@ -59,6 +59,15 @@ export async function getViewer(req: Request): Promise<Viewer | null> {
   const doc = await User.findOne({ userId: claims.u }).exec();
   if (!doc) return null;
 
+  /*
+    탈퇴한 계정은 여기서 막는다. 탈퇴는 **여섯 서비스 공통**이라
+    포털에서 닫으면 이 앱도 함께 닫혀야 한다. 쿠키는 30일짜리라
+    포털에서 막는 것만으로는 남아 있는 세션이 계속 통한다.
+    → myjane/lib/accountLifecycle.ts · 50-Plans/C 법적 페이지.md
+  */
+  if (doc.withdrawnAt) return null;
+
+
   return { doc, userId: claims.u };
 }
 

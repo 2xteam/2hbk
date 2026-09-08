@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AccountWithdrawLink } from "@/components/AccountWithdrawLink";
 import { Avatar } from "@/components/Avatar";
 import { Sheet } from "@/components/Sheet";
 import { showToast } from "@/components/Toast";
@@ -256,6 +257,8 @@ export default function MyPage() {
           </button>
         </div>
       </Sheet>
+
+      <AccountWithdrawLink />
     </>
   );
 }
