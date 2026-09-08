@@ -1,4 +1,6 @@
 import { connectDB } from "@/lib/db";
+import { deleteImages } from "@/lib/r2";
+import { getUserModel } from "@/models/User";
 import { getFollowModel } from "@/models/Follow";
 import { getGoalModel } from "@/models/Goal";
 import { getGoalInvitationModel } from "@/models/GoalInvitation";
@@ -18,10 +20,30 @@ export type PurgeResult = {
   participations: number;
   follows: number;
   invitations: number;
+  /** R2 에서 지운 이미지 개수 (목표 이미지 · 프로필 사진) */
+  r2Files: number;
 };
 
 export async function purgeUserData(userId: string): Promise<PurgeResult> {
   await connectDB();
+
+  /*
+    지우기 전에 이미지 주소를 모아 둔다 — 행을 지운 뒤에는 찾을 수 없다.
+    목표 이미지와 프로필 사진 둘 다 R2 에 있다 → lib/r2.ts 의 deleteImages
+  */
+  const myGoals = await getGoalModel()
+    .find({ createdBy: userId }, { goalImage: 1 })
+    .lean()
+    .exec();
+  const profile = await getUserModel()
+    .findOne({ userId }, { profileImage: 1 })
+    .lean()
+    .exec();
+  const imageUrls = [
+    ...myGoals.map((g) => (typeof g.goalImage === "string" ? g.goalImage : "")),
+    typeof profile?.profileImage === "string" ? profile.profileImage : "",
+  ].filter(Boolean);
+  const r2Files = await deleteImages(imageUrls);
 
   /* 내가 만든 목표 */
   const goals = await getGoalModel().deleteMany({ createdBy: userId }).exec();
@@ -44,5 +66,6 @@ export async function purgeUserData(userId: string): Promise<PurgeResult> {
     participations: participations.modifiedCount ?? 0,
     follows: follows.deletedCount ?? 0,
     invitations: invitations.deletedCount ?? 0,
+    r2Files,
   };
 }
