@@ -97,24 +97,6 @@ export default function MyPage() {
     }
   }
 
-  async function leave() {
-    if (!me) return;
-    const message = me.hasPinLogin
-      ? "2hbk의 목표·스티커·친구가 모두 지워집니다.\nmyjane 계정 자체는 남아 다른 앱은 그대로 쓸 수 있어요.\n계속할까요?"
-      : "계정과 목표·스티커·친구가 모두 지워집니다. 되돌릴 수 없어요.\n계속할까요?";
-    if (!confirm(message)) return;
-
-    setBusy(true);
-    try {
-      await api("/api/me", { method: "DELETE" });
-      clearSession();
-      window.location.href = "/";
-    } catch (err) {
-      showToast(errorMessage(err), "err");
-      setBusy(false);
-    }
-  }
-
   return (
     <>
       <Sheet tone="dark" eyebrow="MY" headline="내 정보">
@@ -238,9 +220,7 @@ export default function MyPage() {
 
       <Sheet eyebrow="ACCOUNT" headline="계정">
         <p className="lead" style={{ marginTop: 0 }}>
-          {me?.hasPinLogin
-            ? "myjane 계정 하나로 여러 앱을 쓰고 있어요. 여기서 탈퇴하면 2hbk 기록만 지워집니다."
-            : "myjane 계정으로 2hbk만 쓰고 있어요."}
+          myjane 계정 하나로 여섯 서비스를 함께 씁니다.
         </p>
         <div className="row row--wrap" style={{ gap: 8, marginTop: 16 }}>
           <button
@@ -251,9 +231,6 @@ export default function MyPage() {
             }}
           >
             로그아웃
-          </button>
-          <button className="btn btn--danger btn--sm" onClick={leave} disabled={busy || !me}>
-            2hbk 탈퇴
           </button>
         </div>
       </Sheet>

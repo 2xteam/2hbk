@@ -1,10 +1,5 @@
 import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/db";
 import { badRequest, requireViewer, serverError } from "@/lib/auth";
-import { getUserModel } from "@/models/User";
-import { getGoalModel } from "@/models/Goal";
-import { getFollowModel } from "@/models/Follow";
-import { getGoalInvitationModel } from "@/models/GoalInvitation";
 
 export const runtime = "nodejs";
 
@@ -73,53 +68,25 @@ export async function PATCH(req: Request) {
 }
 
 /**
- * 2hbk 탈퇴.
+ * 2hbk 만의 탈퇴는 **없앴다.** (2026-09-08)
  *
- * 통합 회원이라 계정 자체를 지우면 다른 myjane 앱의 기록까지 사라진다. 그래서
- * **2hbk 흔적만 지우고** 계정은 남긴다 — 전화번호+PIN 로그인이 없는(2hbk에서
- * 가입한) 계정만 문서째 지운다.
+ * 탈퇴는 여섯 서비스 공통이다 — 방침에 "여섯 서비스 공통 탈퇴, 6개월 보관 후
+ * 폐기" 라고 적어 공개했다. 여기서 2hbk 기록만 즉시 지우면 그 문구와 어긋난다.
+ * 실제로 예전 동작은 **즉시 삭제**였고 보관 기간도 없었다.
+ *
+ * 지금은 이렇게 나뉜다.
+ *   탈퇴 신청   포털 /account/withdraw  (메일 확인까지 받고 withdrawnAt 만 남긴다)
+ *   6개월 뒤    포털 정리 작업이 이 앱의 /api/admin/purge-user 를 부른다
+ *
+ * → myjane/app/api/cron/purge · my-obsidian-vault / 50-Plans/C 법적 페이지.md
  */
-export async function DELETE(req: Request) {
-  try {
-    const auth = await requireViewer(req);
-    if ("error" in auth) return auth.error;
-    const { doc, userId } = auth.viewer;
-
-    await connectDB();
-
-    // 내가 만든 목표, 참가 흔적, 팔로우, 초대를 정리한다
-    await getGoalModel().deleteMany({ createdBy: userId }).exec();
-    await getGoalModel()
-      .updateMany({ "participants.userId": userId }, { $pull: { participants: { userId } } })
-      .exec();
-    await getFollowModel()
-      .deleteMany({ $or: [{ followerId: userId }, { followingId: userId }] })
-      .exec();
-    await getGoalInvitationModel()
-      .deleteMany({ $or: [{ fromUserId: userId }, { toUserId: userId }] })
-      .exec();
-
-    const User = getUserModel();
-    if (doc.pin) {
-      // 다른 앱을 쓰고 있는 계정 — 2hbk 필드만 비운다
-      await User.updateOne(
-        { _id: doc._id },
-        {
-          $set: {
-            userId: null,
-            nickname: null,
-            password: null,
-            profileImage: null,
-            followApprovalRequired: false,
-          },
-        },
-      ).exec();
-      return NextResponse.json({ ok: true, keptAccount: true });
-    }
-
-    await User.deleteOne({ _id: doc._id }).exec();
-    return NextResponse.json({ ok: true, keptAccount: false });
-  } catch (err) {
-    return serverError(err);
-  }
+export async function DELETE() {
+  return NextResponse.json(
+    {
+      ok: false,
+      error:
+        "탈퇴는 myjane 계정에서 진행합니다. https://www.myjane.co.kr/account/withdraw 을 이용해 주세요.",
+    },
+    { status: 410 },
+  );
 }
