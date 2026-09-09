@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2hbk · 인스타그램 카드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" />
+<style>
+  /*
+    2hbk 인스타그램 카드 8장 — 1080×1080. PNG 는 docs/marketing/export-cards.mjs 로 뽑는다.
+    색·서체·구조는 FitLog 카드와 같다(먹청 팔레트 · Pretendard · Gowun Batang). 문구는 app/page.tsx 의 문장.
+    → my-obsidian-vault / 30-Patterns/SNS 소개 카드와 게시글.md
+  */
+
+  :root {
+    --bg: #f7fbfb; --surface: #ffffff; --tint: #e8f2f3;
+    --ink: #0f2027; --dim: #566b70; --border: #d5e3e5;
+    --accent: #116271; --accent-2: #1a7f8f; --deep: #0b4550; --deeper: #071c22;
+    --gold: #ead58c; --gold-ink: #a8842f;
+    --success: #2f8f6b; --success-subtle: #dcefe6; --danger: #c8443f; --warning: #b98a1e;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #e4ecee; font-family: Pretendard, -apple-system, "Segoe UI", sans-serif; color: var(--ink); }
+  .toolbar { position: sticky; top: 0; z-index: 10; display: flex; gap: 10px; align-items: center; padding: 12px 20px; background: rgba(228,236,238,.92); backdrop-filter: blur(6px); font-size: 13px; color: var(--dim); }
+  .toolbar button { font: inherit; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border); background: #fff; cursor: pointer; }
+  .toolbar button[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .deck { display: grid; gap: 40px; padding: 30px 20px 80px; justify-content: center; }
+  body.solo .deck { gap: 0; padding: 0; }
+  body.solo .card { display: none; }
+  body.solo .card.show { display: flex; }
+  .card { width: 1080px; height: 1080px; position: relative; overflow: hidden; display: flex; flex-direction: column; padding: 96px; background: var(--surface); }
+  .card.dark { background: linear-gradient(160deg, var(--accent-2) 0%, var(--deep) 62%, var(--deeper) 100%); color: #eef7f8; }
+  .card.tint { background: var(--tint); }
+  .card.gold { background: linear-gradient(160deg, #fdf7e4 0%, #f7ecc6 100%); }
+  .eyebrow { font-size: 22px; letter-spacing: .22em; font-weight: 800; color: var(--accent); text-transform: uppercase; }
+  .dark .eyebrow { color: var(--gold); } .gold .eyebrow { color: var(--gold-ink); }
+  h1, h2 { font-family: "Gowun Batang", serif; font-weight: 700; margin: 26px 0 0; letter-spacing: -0.01em; line-height: 1.22; }
+  h1 { font-size: 88px; } h2 { font-size: 72px; }
+  .lead { font-size: 32px; line-height: 1.6; color: var(--dim); margin: 34px 0 0; max-width: 860px; }
+  .dark .lead { color: #cfe3e6; }
+  .hl { color: var(--gold); }
+  .mark { background: linear-gradient(transparent 58%, #ead58c 58%, #ead58c 92%, transparent 92%); padding: 0 4px; }
+  .foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; font-size: 24px; color: var(--dim); }
+  .dark .foot { color: #a9c6cb; }
+  .brand { display: flex; align-items: center; gap: 16px; font-weight: 800; letter-spacing: -0.02em; font-size: 30px; }
+  .brand svg { width: 64px; height: 64px; border-radius: 16px; }
+  .url { font-weight: 700; } .idx { font-variant-numeric: tabular-nums; }
+  .viz { margin-top: 40px; display: grid; place-items: center; flex: 1; }
+  .viz svg { width: 100%; max-height: 520px; }
+  .steps { list-style: none; margin: 44px 0 0; padding: 0; display: grid; gap: 34px; }
+  .steps li { display: grid; grid-template-columns: 84px 1fr; gap: 22px; align-items: start; }
+  .num { width: 84px; height: 84px; border-radius: 999px; display: grid; place-items: center; background: var(--accent); color: #fff; font-weight: 800; font-size: 28px; font-variant-numeric: tabular-nums; }
+  .steps h3 { margin: 12px 0 8px; font-size: 38px; font-weight: 800; letter-spacing: -0.01em; }
+  .steps p { margin: 0; font-size: 27px; line-height: 1.55; color: var(--dim); }
+  .feat { margin-top: 40px; display: grid; gap: 18px; }
+  .feat div { padding: 26px 30px; border-radius: 22px; background: var(--surface); border: 1px solid var(--border); }
+  .tint .feat div, .gold .feat div { background: rgba(255,255,255,.75); }
+  .feat strong { font-size: 32px; display: block; margin-bottom: 8px; }
+  .feat p { margin: 0; font-size: 25px; line-height: 1.5; color: var(--dim); }
+  .cta { display: inline-block; margin-top: 44px; padding: 26px 44px; border-radius: 999px; background: var(--gold); color: var(--deeper); font-weight: 800; font-size: 32px; letter-spacing: -0.01em; }
+  .pill { display: inline-block; padding: 10px 20px; border-radius: 999px; background: var(--tint); color: var(--accent); font-weight: 700; font-size: 24px; margin: 0 10px 10px 0; }
+  .dark .pill { background: rgba(255,255,255,.12); color: #eef7f8; }
+
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <span>2hbk 인스타그램 카드 · 1080×1080 · 8장</span>
+  <button id="solo" aria-pressed="false" onclick="toggleSolo()">카드만 보기</button>
+  <span id="nav" hidden><button onclick="go(-1)">◀</button> <span id="pos"></span> <button onclick="go(1)">▶</button></span>
+</div>
+<div class="deck" id="deck">
+
+<section class="card dark" data-i="1">
+  <div class="eyebrow">2HBK · STICKER GOALS</div>
+  <h1>오늘 하나,<br /><span class="hl">스티커 한 장.</span></h1>
+  <p class="lead">목표를 정하고 해낼 때마다 스티커를 붙입니다.<br />칸이 채워지는 걸 보는 것만으로 다음 하나를 하게 됩니다.</p>
+  <div class="foot"><div class="brand"><svg viewBox="0 0 192 192"><defs><linearGradient id="gc1" x1="0" y1="0" x2=".4" y2="1"><stop offset="0" stop-color="#134450"/><stop offset="1" stop-color="#071c22"/></linearGradient></defs><rect width="192" height="192" rx="44" fill="url(#gc1)"/><g transform="rotate(158.96 96 106.46)" fill="none" stroke-width="11" stroke-linecap="round"><circle cx="96" cy="106.46" r="60" stroke="#4a95a6" stroke-dasharray="232.6 144.4"/><circle cx="96" cy="106.46" r="60" stroke="#e8d18a" stroke-dasharray="128 249"/></g><defs><path id="starc1" d="M96.00 61.00 L105.17 86.38 L132.14 87.26 L110.84 103.82 L118.34 129.74 L96.00 114.60 L73.66 129.74 L81.16 103.82 L59.86 87.26 L86.83 86.38 Z"/><clipPath id="halfc1"><polygon points="-20,-17 209,212 -20,212"/></clipPath></defs><use href="#starc1" fill="#eef7f8" clip-path="url(#halfc1)"/><use href="#starc1" fill="none" stroke="#eef7f8" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/></svg> 2hbk</div><span class="url">2hbk.myjane.co.kr</span></div>
+</section>
+
+<section class="card tint" data-i="2">
+  <div class="eyebrow">WHY</div>
+  <h2>작심삼일,<br />왜 그럴까요?</h2>
+  <p class="lead">해낸 게 눈에 안 보이면 이어 가기 어려워요.<br />숫자보다 <strong>남은 칸</strong>이 보여야 다음 하나를 하게 돼요.</p>
+  <div class="feat"><div><strong>체크리스트는 금방 잊어요</strong><p>✓ 표시는 지나가면 끝이에요. 쌓인 게 보이지 않아요.</p></div><div><strong>아이에게는 더 그래요</strong><p>칭찬 스티커판이 냉장고에 붙어 있던 이유가 있어요.</p></div></div>
+  <div class="foot"><span>2hbk</span><span class="idx">2 / 8</span></div>
+</section>
+
+<section class="card " data-i="3">
+  <div class="eyebrow">HOW IT WORKS</div>
+  <h2>세 걸음이면 됩니다</h2>
+  <ol class="steps"><li><span class="num">01</span><div><h3>목표를 만든다</h3><p>이름과 필요한 스티커 수를 정합니다. 20칸짜리 판이 생깁니다.</p></div></li><li><span class="num">02</span><div><h3>해낼 때마다 붙인다</h3><p>목표를 만든 사람이 스티커를 붙입니다. 잘못 붙였다면 뺄 수도 있습니다.</p></div></li><li><span class="num">03</span><div><h3>다 채우면 달성</h3><p>칸을 다 채우면 금색 판으로 바뀝니다. 지나온 기록은 그대로 남습니다.</p></div></li></ol>
+  <div class="foot"><span>2hbk</span><span class="idx">3 / 8</span></div>
+</section>
+
+<section class="card " data-i="4">
+  <div class="eyebrow">BOARD</div>
+  <h2>남은 칸이<br />보이면 하게 돼요</h2>
+  <div class="viz"><svg viewBox="0 0 560 300" aria-label="20칸 스티커판, 13칸 채움">
+  <rect x="20" y="20" width="520" height="260" rx="22" fill="#fff" stroke="#d5e3e5"/>
+  <text x="48" y="58" font-family="Pretendard, sans-serif" font-size="14" font-weight="800" fill="#116271" letter-spacing=".18em">매일 30분 걷기 · 13 / 20</text>
+  <g><circle cx="70" cy="105" r="19" fill="#e8d18a" stroke="#c9a84c" stroke-width="2"/><path d="M63 106 l5 5 l10 -11" fill="none" stroke="#7a5a12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="117" cy="105" r="19" fill="#e8d18a" stroke="#c9a84c" stroke-width="2"/><path d="M110 106 l5 5 l10 -11" fill="none" stroke="#7a5a12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="164" cy="105" r="19" fill="#e8d18a" stroke="#c9a84c" stroke-width="2"/><path d="M157 106 l5 5 l10 -11" fill="none" stroke="#7a5a12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="211" cy="105" r="19" fill="#e8d18a" stroke="#c9a84c" stroke-width="2"/><path d="M204 106 l5 5 l10 -11" fill="none" stroke="#7a5a12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="258" cy="105" r="19" fill="#e8d18a" stroke="#c9a84c" stroke-width="2"/><path d="M251 106 l5 5 l10 -11" fill="none" stroke="#7a5a12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="305" cy="105" r="19" fill="#e8d18a" stroke="#c9a84c" stroke-width="2"/><path d="M298 106 l5 5 l10 -11" fill="none" stroke="#7a5a12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="352" cy="105" r="19" fill="#e8d18a" stroke="#c9a84c" stroke-width="2"/><path d="M345 106 l5 5 l10 -11" fill="none" stroke="#7a5a12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="399" cy="105" r="19" fill="#e8d18a" stroke="#c9a84c" stroke-width="2"/><path d="M392 106 l5 5 l10 -11" fill="none" stroke="#7a5a12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="446" cy="105" r="19" fill="#e8d18a" stroke="#c9a84c" stroke-width="2"/><path d="M439 106 l5 5 l10 -11" fill="none" stroke="#7a5a12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="493" cy="105" r="19" fill="#e8d18a" stroke="#c9a84c" stroke-width="2"/><path d="M486 106 l5 5 l10 -11" fill="none" stroke="#7a5a12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="70" cy="175" r="19" fill="#e8d18a" stroke="#c9a84c" stroke-width="2"/><path d="M63 176 l5 5 l10 -11" fill="none" stroke="#7a5a12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="117" cy="175" r="19" fill="#e8d18a" stroke="#c9a84c" stroke-width="2"/><path d="M110 176 l5 5 l10 -11" fill="none" stroke="#7a5a12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="164" cy="175" r="19" fill="#e8d18a" stroke="#c9a84c" stroke-width="2"/><path d="M157 176 l5 5 l10 -11" fill="none" stroke="#7a5a12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="211" cy="175" r="19" fill="#eef3f4" stroke="#d5e3e5" stroke-width="2"/><circle cx="258" cy="175" r="19" fill="#eef3f4" stroke="#d5e3e5" stroke-width="2"/><circle cx="305" cy="175" r="19" fill="#eef3f4" stroke="#d5e3e5" stroke-width="2"/><circle cx="352" cy="175" r="19" fill="#eef3f4" stroke="#d5e3e5" stroke-width="2"/><circle cx="399" cy="175" r="19" fill="#eef3f4" stroke="#d5e3e5" stroke-width="2"/><circle cx="446" cy="175" r="19" fill="#eef3f4" stroke="#d5e3e5" stroke-width="2"/><circle cx="493" cy="175" r="19" fill="#eef3f4" stroke="#d5e3e5" stroke-width="2"/></g>
+  <text x="48" y="256" font-family="Pretendard, sans-serif" font-size="15" fill="#566b70">남은 칸 7 · 다 채우면 금색 판으로</text>
+</svg></div>
+  <p class="lead" style="margin-top:20px">12/20이라고 적는 것보다 빈 칸 여덟 개가 보이는 쪽이 훨씬 잘 통해요. 다 채우면 금색 판으로 바뀌어요.</p>
+  <div class="foot"><span>2hbk</span><span class="idx">4 / 8</span></div>
+</section>
+
+<section class="card tint" data-i="5">
+  <div class="eyebrow">THREE MODES</div>
+  <h2>혼자 해도, <span class="mark">같이 해도</span></h2>
+  <div class="feat"><div><strong>혼자 하기 · 나만 보기</strong><p>내 목표를 내가 채웁니다. 만들면 바로 참가자가 됩니다.</p></div><div><strong>겨루기 · 전체 공개</strong><p>누구나 찾아 참가를 요청할 수 있습니다. 같은 목표를 여럿이 나란히 채웁니다.</p></div><div><strong>챌린저 모집 · 친구에게만</strong><p>친구로 이어진 사람에게만 보입니다. 초대해서 함께 시작합니다.</p></div></div>
+  <div class="foot"><span>2hbk</span><span class="idx">5 / 8</span></div>
+</section>
+
+<section class="card " data-i="6">
+  <div class="eyebrow">ONE ACCOUNT</div>
+  <h2>계정만 공유해요</h2>
+  <p class="lead">myjane 계정 하나로 여러 기록 서비스를 골라 씁니다. 기록과 데이터는 서비스마다 따로 쌓여요.</p>
+  <div class="feat"><div><strong>하나만 써도 충분해요</strong><p>쓰지 않는 서비스는 열지 않아도 돼요. 이 앱만 써도 됩니다.</p></div><div><strong>계정만, 기록은 따로</strong><p>공부는 공부끼리, 건강은 건강끼리, 습관은 습관끼리 쌓여요.</p></div></div>
+  <div class="foot"><span>2hbk</span><span class="idx">6 / 8</span></div>
+</section>
+
+<section class="card gold" data-i="7">
+  <div class="eyebrow">TOGETHER</div>
+  <h2>스티커는 목표를<br />만든 사람이 붙여요</h2>
+  <p class="lead">아이의 목표는 부모가, 함께 겨루는 목표는 그 목표를 연 사람이 붙입니다. 아무나 남의 칸을 채울 수 없어요.</p>
+  <div style="margin-top:34px"><span class="pill">부모가 붙이는 아이 목표</span><span class="pill">친구 초대</span><span class="pill">기록은 서비스마다 따로</span></div>
+  <div class="foot"><span>2hbk</span><span class="idx">7 / 8</span></div>
+</section>
+
+<section class="card dark" data-i="8">
+  <div class="eyebrow">START</div>
+  <h1>오늘 목표 하나만<br />정해 볼까요?</h1>
+  <p class="lead">myjane 계정 하나로 들어와요. 목표와 스티커 기록은 이 서비스에만 쌓여요.</p>
+  <span class="cta">2hbk.myjane.co.kr</span>
+  <div class="foot"><div class="brand"><svg viewBox="0 0 192 192"><defs><linearGradient id="gc8" x1="0" y1="0" x2=".4" y2="1"><stop offset="0" stop-color="#134450"/><stop offset="1" stop-color="#071c22"/></linearGradient></defs><rect width="192" height="192" rx="44" fill="url(#gc8)"/><g transform="rotate(158.96 96 106.46)" fill="none" stroke-width="11" stroke-linecap="round"><circle cx="96" cy="106.46" r="60" stroke="#4a95a6" stroke-dasharray="232.6 144.4"/><circle cx="96" cy="106.46" r="60" stroke="#e8d18a" stroke-dasharray="128 249"/></g><defs><path id="starc8" d="M96.00 61.00 L105.17 86.38 L132.14 87.26 L110.84 103.82 L118.34 129.74 L96.00 114.60 L73.66 129.74 L81.16 103.82 L59.86 87.26 L86.83 86.38 Z"/><clipPath id="halfc8"><polygon points="-20,-17 209,212 -20,212"/></clipPath></defs><use href="#starc8" fill="#eef7f8" clip-path="url(#halfc8)"/><use href="#starc8" fill="none" stroke="#eef7f8" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/></svg> 2hbk</div><span>my<span style="color:#5fb8c9">jane</span></span></div>
+</section>
+
+</div>
+<script>
+  let cur = 1;
+  const cards = [...document.querySelectorAll('.card')];
+  function render() { cards.forEach(c => c.classList.toggle('show', Number(c.dataset.i) === cur)); document.getElementById('pos').textContent = cur + ' / ' + cards.length; }
+  function toggleSolo() { const on = document.body.classList.toggle('solo'); document.getElementById('solo').setAttribute('aria-pressed', String(on)); document.getElementById('nav').hidden = !on; render(); }
+  function go(d) { cur = Math.min(cards.length, Math.max(1, cur + d)); render(); }
+  document.addEventListener('keydown', e => { if (!document.body.classList.contains('solo')) return; if (e.key === 'ArrowRight') go(1); if (e.key === 'ArrowLeft') go(-1); });
+</script>
+</body>
+</html>
