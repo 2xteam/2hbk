@@ -60,8 +60,7 @@ export async function POST(req: Request) {
       user: {
         id: String(user._id),
         name: user.nickname ?? user.name ?? "",
-        phone: user.phone ?? "",
-        email: user.email ?? "",
+        hasEmail: Boolean(user.email),
         nickname: user.nickname ?? "",
         userId: user.userId,
       },
