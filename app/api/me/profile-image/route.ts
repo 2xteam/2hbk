@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     const file = form.get("file");
     if (!(file instanceof File)) return badRequest("이미지 파일이 필요합니다.");
 
-    const url = await uploadImage(file, "profiles");
+    const url = await uploadImage(file, "profiles", doc.userId ?? "");
     doc.profileImage = url;
     await doc.save();
 

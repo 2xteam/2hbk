@@ -30,7 +30,7 @@ export async function POST(req: Request, { params }: Params) {
     const file = form.get("file");
     if (!(file instanceof File)) return badRequest("이미지 파일이 필요합니다.");
 
-    const url = await uploadImage(file, "goals");
+    const url = await uploadImage(file, "goals", userId);
     goal.goalImage = url;
     goal.updatedBy = userId;
     await goal.save();

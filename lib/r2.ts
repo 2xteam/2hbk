@@ -1,4 +1,4 @@
-import { DeleteObjectsCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectsCommand, ListObjectsV2Command, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 /**
  * Cloudflare R2 — 프로필·목표 이미지 저장소.
@@ -56,16 +56,26 @@ const ALLOWED = new Map([
 
 export const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
-/** 업로드하고 공개 URL을 돌려준다 */
+/**
+ * 업로드하고 공개 URL을 돌려준다.
+ *
+ * 키는 `{prefix}/{owner}/{uuid}.{ext}` — **소유자(`users.userId`)를 넣는다.**
+ * 2026-09-09 전에는 `{prefix}/{uuid}` 라 누구 것인지 남지 않아, 탈퇴 폐기 때 DB 에
+ * URL 이 없는 고아 파일을 지울 수 없었다. 이제 접두사로 쓸어 담을 수 있다
+ * → deleteByOwner() · my-obsidian-vault / 50-Plans/E 개인정보 보호 보강.md 9번
+ */
 export async function uploadImage(
   file: File,
   prefix: "profiles" | "goals",
+  owner: string,
 ): Promise<string> {
   const ext = ALLOWED.get(file.type);
   if (!ext) throw new Error("JPG · PNG · WEBP · GIF 이미지만 올릴 수 있습니다.");
   if (file.size > MAX_IMAGE_BYTES) throw new Error("이미지는 8MB 이하만 올릴 수 있습니다.");
 
-  const key = `${prefix}/${crypto.randomUUID()}.${ext}`;
+  const safeOwner = owner.replace(/[^A-Za-z0-9_-]/g, "");
+  if (!safeOwner) throw new Error("이미지 소유자를 알 수 없습니다.");
+  const key = `${prefix}/${safeOwner}/${crypto.randomUUID()}.${ext}`;
   const body = Buffer.from(await file.arrayBuffer());
 
   await getClient().send(
@@ -84,10 +94,9 @@ export async function uploadImage(
 /**
  * 올렸던 이미지를 지운다 — **DB 에 적힌 공개 URL 을 역산해서.**
  *
- * ⚠️ 이 앱의 키는 `profiles/{uuid}` · `goals/{uuid}` 라 **누구 것인지가 남아
- * 있지 않다.** 그래서 접두사로 쓸어 담을 수 없고 URL 이 유일한 단서다.
- * DB 행이 없는 고아 파일은 지울 방법이 없다 — 정말 해결하려면 업로드할 때
- * 키에 사용자를 넣도록 바꿔야 한다.
+ * ⚠️ 2026-09-09 전에 올린 파일의 키는 `profiles/{uuid}` · `goals/{uuid}` 라 **누구
+ * 것인지가 남아 있지 않다.** 그 파일들은 URL 이 유일한 단서다 — DB 행이 없는 고아는
+ * 지울 수 없다. 그 뒤에 올린 파일은 키에 소유자가 있어 `deleteByOwner()` 가 쓸어 담는다.
  *
  * 실패해도 던지지 않는다. 파일이 안 지워졌다고 회원 폐기를 멈추면 그 사람은
  * 영영 폐기되지 않는다 — 방침에 적은 6개월이 지켜지지 않는다.
@@ -123,6 +132,43 @@ export async function deleteImages(urls: string[]): Promise<number> {
       }
     } catch (e) {
       console.error("[purge] R2 삭제 요청 실패", e);
+    }
+  }
+  return removed;
+}
+
+/**
+ * 한 사람의 접두사(`profiles/{userId}/` · `goals/{userId}/`)를 통째로 지운다.
+ * DB 에 URL 이 남지 않은 고아 파일까지 잡힌다. 옛 키(소유자 없음)는 여기 안 걸린다.
+ * 실패해도 던지지 않는다 — deleteImages 와 같은 이유.
+ */
+export async function deleteByOwner(owner: string): Promise<number> {
+  if (!isR2Configured()) return 0;
+  const safeOwner = owner.replace(/[^A-Za-z0-9_-]/g, "");
+  if (!safeOwner) return 0;
+
+  let removed = 0;
+  for (const prefix of [`profiles/${safeOwner}/`, `goals/${safeOwner}/`]) {
+    let token: string | undefined;
+    try {
+      do {
+        const page = await getClient().send(
+          new ListObjectsV2Command({ Bucket: getBucket(), Prefix: prefix, ContinuationToken: token }),
+        );
+        const keys = (page.Contents ?? []).map((o) => o.Key).filter((k): k is string => Boolean(k));
+        if (keys.length > 0) {
+          const res = await getClient().send(
+            new DeleteObjectsCommand({
+              Bucket: getBucket(),
+              Delete: { Objects: keys.map((Key) => ({ Key })), Quiet: true },
+            }),
+          );
+          removed += keys.length - (res.Errors?.length ?? 0);
+        }
+        token = page.IsTruncated ? page.NextContinuationToken : undefined;
+      } while (token);
+    } catch (e) {
+      console.error(`[purge] R2 접두사 삭제 실패 ${prefix}`, e);
     }
   }
   return removed;

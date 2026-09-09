@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { getUserModel, type UserDocument } from "@/models/User";
 import { verifySessionToken } from "@/lib/sessionToken";
-import { SESSION_KEY } from "@/lib/session";
+import { readSessionTokenFromRequest } from "@/lib/sessionCookie";
 
 /**
  * 서버에서 요청자를 확인한다.
@@ -11,37 +11,7 @@ import { SESSION_KEY } from "@/lib/session";
  * 같은 쿠키 안의 `token`(HMAC 서명)만 신뢰하고, 거기 담긴 `userId`로 회원을 찾는다.
  */
 
-function readCookie(req: Request, name: string): string | null {
-  const header = req.headers.get("cookie");
-  if (!header) return null;
-  const prefix = name + "=";
-  for (const part of header.split(";")) {
-    const trimmed = part.trim();
-    if (trimmed.startsWith(prefix)) {
-      try {
-        return decodeURIComponent(trimmed.slice(prefix.length));
-      } catch {
-        return null;
-      }
-    }
-  }
-  return null;
-}
 
-/** 쿠키에서 서명 토큰만 꺼낸다. Authorization 헤더도 함께 받는다 */
-function readToken(req: Request): string | null {
-  const auth = req.headers.get("authorization");
-  if (auth?.startsWith("Bearer ")) return auth.slice(7).trim();
-
-  const raw = readCookie(req, SESSION_KEY);
-  if (!raw) return null;
-  try {
-    const parsed = JSON.parse(raw) as { token?: unknown };
-    return typeof parsed.token === "string" ? parsed.token : null;
-  } catch {
-    return null;
-  }
-}
 
 export type Viewer = {
   /** 통합 회원 문서 */
@@ -51,7 +21,7 @@ export type Viewer = {
 };
 
 export async function getViewer(req: Request): Promise<Viewer | null> {
-  const claims = verifySessionToken(readToken(req));
+  const claims = verifySessionToken(readSessionTokenFromRequest(req));
   if (!claims) return null;
 
   await connectDB();
@@ -66,6 +36,12 @@ export async function getViewer(req: Request): Promise<Viewer | null> {
     → myjane/lib/accountLifecycle.ts · 50-Plans/C 법적 페이지.md
   */
   if (doc.withdrawnAt) return null;
+
+  /*
+    세션 버전이 다르면 폐기된 토큰이다 (비밀번호 변경·탈퇴·모든 기기 로그아웃).
+    `sv` 가 없는 옛 토큰은 아직 한 번도 올리지 않은 계정(0)에서만 통한다.
+  */
+  if ((claims.sv ?? 0) !== (doc.sessionVersion ?? 0)) return null;
 
 
   return { doc, userId: claims.u };

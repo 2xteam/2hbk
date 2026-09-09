@@ -1,5 +1,5 @@
 import { connectDB } from "@/lib/db";
-import { deleteImages } from "@/lib/r2";
+import { deleteByOwner, deleteImages } from "@/lib/r2";
 import { getUserModel } from "@/models/User";
 import { getFollowModel } from "@/models/Follow";
 import { getGoalModel } from "@/models/Goal";
@@ -43,7 +43,8 @@ export async function purgeUserData(userId: string): Promise<PurgeResult> {
     ...myGoals.map((g) => (typeof g.goalImage === "string" ? g.goalImage : "")),
     typeof profile?.profileImage === "string" ? profile.profileImage : "",
   ].filter(Boolean);
-  const r2Files = await deleteImages(imageUrls);
+  /* URL 역산(옛 키) + 소유자 접두사 쓸어담기(새 키 — 고아 파일까지) */
+  const r2Files = (await deleteImages(imageUrls)) + (await deleteByOwner(userId));
 
   /* 내가 만든 목표 */
   const goals = await getGoalModel().deleteMany({ createdBy: userId }).exec();
