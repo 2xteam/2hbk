@@ -18,6 +18,8 @@ export type Viewer = {
   doc: UserDocument;
   /** 도메인 식별자 — 목표·팔로우·초대가 참조하는 값 */
   userId: string;
+  /** 자녀 프로필 세션이면 보호자 `_id`. 앱은 참고만 한다 */
+  guardianId: string | null;
 };
 
 export async function getViewer(req: Request): Promise<Viewer | null> {
@@ -44,7 +46,7 @@ export async function getViewer(req: Request): Promise<Viewer | null> {
   if ((claims.sv ?? 0) !== (doc.sessionVersion ?? 0)) return null;
 
 
-  return { doc, userId: claims.u };
+  return { doc, userId: claims.u, guardianId: claims.gid ?? null };
 }
 
 /** 로그인이 필요한 라우트에서 쓴다. 실패하면 401 응답을 돌려준다 */
