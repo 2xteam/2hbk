@@ -1,158 +1,40 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
-import { Sheet } from "@/components/Sheet";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import { api, errorMessage } from "@/lib/api";
-import { hasUsableSession, saveSession, type SessionUser } from "@/lib/session";
-import { usesPortal, loginUrl, signupUrl } from "@/lib/portal";
+import { Suspense, useEffect } from "react";
+import { loadSession } from "@/lib/session";
+import { loginUrl } from "@/lib/portal";
 
 /**
- * 이메일 + 비밀번호 로그인.
+ * 로그인은 **포털에서만** 한다. 이 경로는 옛 링크를 위해 남겨 둔 이동 화면이다.
  *
- * 운영 도메인에서는 포털(`www.myjane.co.kr`)이 로그인을 맡으므로 이 화면은
- * 로컬 개발과 미리보기 배포에서 쓴다. 포털에서 열리면 바로 포털로 넘긴다.
+ * 예전에는 로컬 개발용 전화번호+PIN 로그인 화면이 여기 있었다. 그 라우트는
+ * 세션 쿠키(`snap_session` · `snap_auth`)를 심지 않아서 localhost 에서 로그인해도
+ * 곧바로 다시 로그인 화면으로 튕겼고, 전화번호 로그인은 2026-09-10 에 끝났다.
+ * 로컬에서는 localhost:3000 포털(이메일 로그인)로 간다 → lib/portal.ts
  */
-function LoginForm() {
+function LoginRedirect() {
   const params = useSearchParams();
-  const next = params.get("next") ?? "/home";
+  const raw = params.get("next") ?? "/home";
+  const next = raw.startsWith("/") && !raw.startsWith("//") ? raw : "/home";
   /** 세션이 있어도 로그인 화면을 보여 달라는 표시 → lib/portal.ts */
   const relogin = params.get("relogin") === "1";
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [reveal, setReveal] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
-
   useEffect(() => {
-    /*
-      로그인 여부는 `hasUsableSession()` 하나로만 판단한다.
-      화면 게이트는 서명 토큰까지 보고 여기서는 사용자만 봤더니, 토큰 없는 세션에서
-      둘이 서로에게 넘기며 무한히 왕복했다(2026-09-03). → components/AuthGate.tsx
-    */
-    if (!relogin && hasUsableSession()) {
+    if (!relogin && loadSession()) {
       window.location.replace(next);
       return;
     }
-    // 운영 도메인에서는 포털이 로그인을 맡는다. `relogin`을 함께 넘겨야
-    // 포털이 낡은 세션을 보고 그대로 되돌려보내지 않는다
-    if (usesPortal()) window.location.replace(loginUrl(next, { relogin }));
+    window.location.replace(loginUrl(next, { relogin }));
   }, [next, relogin]);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    setMsg(null);
-    try {
-      const res = await api<{ user: SessionUser; token: string }>("/api/auth/login", {
-        method: "POST",
-        body: { email, password },
-      });
-      saveSession(res.user, res.token);
-      window.location.replace(next);
-    } catch (err) {
-      setMsg(errorMessage(err));
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <main className="page" style={{ paddingTop: 40, maxWidth: 460 }}>
-      <Sheet
-        tone="dark"
-        eyebrow="WELCOME BACK"
-        headline={
-          <>
-            다시,
-            <br />
-            오늘의 한 칸을
-          </>
-        }
-        lead="모아 둔 스티커판을 이어서 채워요."
-      />
-
-      <Sheet>
-        <form onSubmit={submit}>
-          {msg ? <p className="notice notice--error">{msg}</p> : null}
-
-          <div className="field">
-            <label className="field-label" htmlFor="email">
-              이메일
-            </label>
-            <input
-              id="email"
-              className="field-input"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="field">
-            <label className="field-label" htmlFor="password">
-              비밀번호
-            </label>
-            <div style={{ position: "relative" }}>
-              <input
-                id="password"
-                className="field-input"
-                type={reveal ? "text" : "password"}
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={{ paddingRight: 56 }}
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setReveal((v) => !v)}
-                style={revealStyle}
-              >
-                {reveal ? "숨기기" : "보기"}
-              </button>
-            </div>
-          </div>
-
-          <button className="btn btn--primary btn--block" type="submit" disabled={busy}>
-            {busy ? "확인하는 중…" : "로그인"}
-          </button>
-        </form>
-
-        <p style={{ marginTop: 18, textAlign: "center", fontSize: "0.8rem" }}>
-          <span className="muted">아직 계정이 없으신가요? </span>
-          <a href={signupUrl(next)}>회원가입</a>
-        </p>
-      </Sheet>
-    </main>
-  );
+  return null;
 }
-
-const revealStyle: React.CSSProperties = {
-  position: "absolute",
-  right: 10,
-  top: "50%",
-  transform: "translateY(-50%)",
-  border: "none",
-  background: "none",
-  color: "var(--text-muted)",
-  fontSize: 12,
-  fontWeight: 700,
-  fontFamily: "inherit",
-  cursor: "pointer",
-};
 
 export default function LoginPage() {
   return (
-    <ThemeProvider>
-      <Suspense fallback={null}>
-        <LoginForm />
-      </Suspense>
-    </ThemeProvider>
+    <Suspense fallback={null}>
+      <LoginRedirect />
+    </Suspense>
   );
 }
