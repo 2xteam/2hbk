@@ -38,7 +38,7 @@ export default function LandingPage() {
               <>
                 오늘 하나,
                 <br />
-                <span style={{ color: "#ead58c" }}>스티커 한 장.</span>
+                <span style={{ color: "#feda75" }}>스티커 한 장.</span>
               </>
             }
             lead="목표를 정하고 해낼 때마다 스티커를 붙입니다. 칸이 채워지는 걸 보는 것만으로 다음 하나를 하게 됩니다."

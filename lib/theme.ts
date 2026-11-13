@@ -22,22 +22,22 @@ export const PRESET_THEMES: ThemeConfig[] = [
   {
     id: "light",
     label: "라이트",
-    preview: { bg: "#f7fbfb", accent: "#116271", text: "#0f2027" },
+    preview: { bg: "#f6f3fb", accent: "#962fbf", text: "#1c1c1e" },
   },
   {
     id: "dark",
     label: "먹청 다크",
-    preview: { bg: "#04161b", accent: "#5fb8c9", text: "#eef7f8" },
+    preview: { bg: "#120f1c", accent: "#f6a5d3", text: "#f6f2fb" },
   },
   {
     id: "custom",
     label: "커스텀",
-    preview: { bg: "#f7fbfb", accent: "#116271", text: "#0f2027" },
+    preview: { bg: "#f6f3fb", accent: "#962fbf", text: "#1c1c1e" },
   },
 ];
 
 export const DEFAULT_THEME: ThemeId = "light";
-export const DEFAULT_CUSTOM: ThemeCustomColor = { accent: "#116271", bg: "#f7fbfb" };
+export const DEFAULT_CUSTOM: ThemeCustomColor = { accent: "#962fbf", bg: "#f6f3fb" };
 
 export const THEME_STORAGE_KEY = "2hbk_theme";
 
@@ -104,23 +104,23 @@ export function buildCustomVars(custom: ThemeCustomColor): Record<string, string
     "--bg-elevated": mix(surface, isDark ? 0.82 : 1),
     "--border": isDark ? "rgba(255,255,255,0.14)" : "rgba(0,0,0,0.1)",
     "--border-subtle": isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.05)",
-    "--text-primary": isDark ? "#ffffff" : "#0f2027",
-    "--text-secondary": isDark ? "#a3bcc1" : "#566b70",
-    "--text-muted": isDark ? "#8ba5aa" : "#5e7377",
+    "--text-primary": isDark ? "#ffffff" : "#1c1c1e",
+    "--text-secondary": isDark ? "#a3bcc1" : "#5c5866",
+    "--text-muted": isDark ? "#8ba5aa" : "#5f5b69",
     "--accent": custom.accent,
     "--accent-hover": `rgb(${Math.max(ar - 24, 0)},${Math.max(ag - 24, 0)},${Math.max(ab - 24, 0)})`,
     "--accent-subtle": `rgba(${ar},${ag},${ab},0.14)`,
-    "--point": isDark ? "#e8c96a" : "#c9a84c",
-    "--point-ink": isDark ? "#e8c96a" : "#725c1a",
-    "--point-subtle": "rgba(201,168,76,0.14)",
-    "--gold": isDark ? "#e8c96a" : "#c9a84c",
+    "--point": isDark ? "#feda75" : "#fa7e1e",
+    "--point-ink": isDark ? "#feda75" : "#a4470b",
+    "--point-subtle": "rgba(250,126,30,0.14)",
+    "--gold": isDark ? "#feda75" : "#fa7e1e",
     "--danger": isDark ? "#ff7a90" : "#e0455f",
     "--danger-subtle": "rgba(224,69,95,0.12)",
     "--success": isDark ? "#7ee0b8" : "#2f9e74",
     "--success-subtle": "rgba(47,158,116,0.12)",
-    "--warning": "#c9a84c",
+    "--warning": "#fa7e1e",
     "--input-bg": mix(surface, isDark ? 0.9 : 1),
-    "--input-border": isDark ? "rgba(255,255,255,0.16)" : "rgba(15,72,84,0.14)",
+    "--input-border": isDark ? "rgba(255,255,255,0.16)" : "rgba(150,47,191,0.14)",
     "--on-accent": "#ffffff",
   };
 }
