@@ -10,8 +10,8 @@ export const metadata: Metadata = {
   title: "2hbk",
   description: "함히보까 — 함께 목표를 정하고 스티커를 모아 채우는 기록 도구",
   icons: {
-    icon: "/favicon.png",
-    apple: "/icon.png",
+    icon: "/favicon-v2.png",
+    apple: "/icon-v2.png",
   },
   manifest: "/manifest.webmanifest",
   other: {
